@@ -70,6 +70,33 @@ fetch keyed by an `/@username` route param without changing its consumers:
   intentionally doesn't fake one. That's the kind of thing a future
   Spotify-backed provider could add.
 
+## Deploying to GitHub Pages
+
+A workflow at `.github/workflows/deploy.yml` builds and deploys on every push
+to `main`. To turn it on:
+
+1. **Push this repo to GitHub.**
+2. **Add your env values as repo secrets** — Settings → Secrets and variables
+   → Actions → New repository secret — one for each of `VITE_LASTFM_API_KEY`,
+   `VITE_LASTFM_USERNAME`, `VITE_DISPLAY_NAME`, `VITE_SPOTIFY_URL`,
+   `VITE_AOTY_URL`, `VITE_POLL_INTERVAL_MS`.
+3. **Set the base path** in `.github/workflows/deploy.yml`:
+   - Repo is a *project* page (site will live at `username.github.io/repo-name/`) →
+     keep `VITE_BASE_PATH: /repo-name/`, matching your actual repo name.
+   - Repo is a *user/org* page (named exactly `username.github.io`) or you're
+     using a custom domain → delete that `VITE_BASE_PATH` line entirely.
+4. **Enable Pages** — Settings → Pages → Build and deployment → Source:
+   **GitHub Actions**.
+5. Push to `main` (or run the workflow manually from the Actions tab) and the
+   site deploys automatically.
+
+**Heads up:** Vite inlines `VITE_*` env vars into the built JS at compile
+time. That means once deployed, your Last.fm API key is visible to anyone
+who views the page source or network tab — this is true of any client-only
+static deploy, not specific to GitHub Pages. Fine for a personal page given
+Last.fm's key is rate-limited and read-only, but don't reuse that key
+anywhere it needs to stay private.
+
 ## Notes for a future multi-user platform
 
 - The Last.fm API key is currently read client-side via Vite env vars,
